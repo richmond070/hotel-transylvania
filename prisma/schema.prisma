@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Guest {
+  id        Int    @id @unique @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String
+
+  reservations Reservation[]
+}
+
+model Room {
+  roomId   Int        @id @unique @default(autoincrement())
+  roomType String
+  status   RoomStatus
+  rate     Float
+
+  reservations Reservation[]
+}
+
+model Reservation {
+  reservationID     Int      @id @unique @default(autoincrement())
+  checkInDate       DateTime
+  checkOutDate      DateTime
+  totalAmount       Float
+  reservationStatus String
+
+  guest   Guest @relation(fields: [guestId], references: [id])
+  guestId Int
+
+  room       Room @relation(fields: [roomNumber], references: [roomId])
+  roomNumber Int
+
+  billing Billing?
+}
+
+model Staff {
+  staffId   Int            @id @unique @default(autoincrement())
+  firstName String
+  lastName  String
+  userName  String
+  position  staff_position
+}
+
+model Billing {
+  id            Int    @id @unique @default(autoincrement())
+  totalAmount   Float
+  paymentStatus String
+
+  reservation   Reservation @relation(fields: [reservationId], references: [reservationID])
+  reservationId Int         @unique
+}
+
+enum RoomStatus {
+  vacant
+  occupied
+  under_maintenace
+}
+
+enum staff_position {
+  General_manger
+  Front_desk
+  House_keeping
+}
