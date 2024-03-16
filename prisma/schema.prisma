@@ -14,10 +14,11 @@ datasource db {
 }
 
 model Guest {
-  id        Int    @id @unique @default(autoincrement())
+  id        Int     @id @unique @default(autoincrement())
   firstName String
   lastName  String
   email     String
+  active    Boolean
 
   reservations Reservation[]
 }
@@ -32,11 +33,11 @@ model Room {
 }
 
 model Reservation {
-  reservationID     Int      @id @unique @default(autoincrement())
+  reservationID     Int           @id @unique @default(autoincrement())
   checkInDate       DateTime
   checkOutDate      DateTime
   totalAmount       Float
-  reservationStatus String
+  reservationStatus ReserveStatus
 
   guest   Guest @relation(fields: [guestId], references: [id])
   guestId Int
@@ -48,17 +49,16 @@ model Reservation {
 }
 
 model Staff {
-  staffId   Int            @id @unique @default(autoincrement())
-  firstName String
-  lastName  String
-  userName  String
-  position  staff_position
+  staffId  Int            @id @unique @default(autoincrement())
+  fullName String
+  userName String
+  position staff_position
 }
 
 model Billing {
-  id            Int    @id @unique @default(autoincrement())
+  id            Int     @id @unique @default(autoincrement())
   totalAmount   Float
-  paymentStatus String
+  paymentStatus payment
 
   reservation   Reservation @relation(fields: [reservationId], references: [reservationID])
   reservationId Int         @unique
@@ -74,4 +74,14 @@ enum staff_position {
   General_manger
   Front_desk
   House_keeping
+}
+
+enum ReserveStatus {
+  confirmed
+  canceled
+}
+
+enum payment {
+  paid
+  notPaid
 }

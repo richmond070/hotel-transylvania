@@ -24,9 +24,17 @@ export const createRoom = async (req: Request, res: Response) => {
 }
 
 //CREATE ROOMS IN BULK 
-export const createRoomS = async (req: Request, res: Response) => {
+export const createRooms = async (req: Request, res: Response) => {
     const { id, roomType, status, rate } = req.body
     try {
+        const { presidential, standard, regular, penthouse } = roomType;
+
+        if (!presidential || !standard || !regular || !penthouse) {
+            return res.status(401).json({
+                error: "Room type cannot exist!!"
+            })
+        }
+
         const room = await prisma.room.createMany({
             data: {
                 roomId: id,
@@ -71,7 +79,7 @@ export const listRoom = async (req: Request, res: Response) => {
 //LIST ALL THE Rooms
 export const listRooms = async (req: Request, res: Response) => {
     try {
-        const rooms = await prisma.guest.findMany();
+        const rooms = await prisma.room.findMany();
         res.status(200).json({ data: rooms })
     }
     catch (error: any) {
@@ -83,7 +91,7 @@ export const listRooms = async (req: Request, res: Response) => {
 //UPDATE ROOM INFORMATION
 export const updateRoom = async (req: Request, res: Response) => {
     try {
-        const { type, id, status } = req.body
+        const { rate, id, status } = req.body
         const guestId = await prisma.room.findUnique({
             where: {
                 roomId: id
@@ -101,7 +109,7 @@ export const updateRoom = async (req: Request, res: Response) => {
                 roomId: id
             },
             data: {
-                roomType: type,
+                rate: rate,
                 status: status
             }
         });
@@ -120,7 +128,7 @@ export const updateRoom = async (req: Request, res: Response) => {
 //update as many rooms as possible
 export const updateRooms = async (req: Request, res: Response) => {
     try {
-        const { type, id, status } = req.body
+        const { rate, id, status } = req.body
 
         const guestId = await prisma.room.findUnique({
             where: {
@@ -139,7 +147,7 @@ export const updateRooms = async (req: Request, res: Response) => {
                 roomId: id
             },
             data: {
-                roomType: type,
+                rate: rate,
                 status: status
             }
         });
@@ -156,7 +164,7 @@ export const updateRooms = async (req: Request, res: Response) => {
 }
 
 //delete room 
-const deleteRoom = async (req: Request, res: Response) => {
+export const deleteRoom = async (req: Request, res: Response) => {
     const { id } = req.body
     try {
         const room = await prisma.room.delete({
@@ -177,7 +185,7 @@ const deleteRoom = async (req: Request, res: Response) => {
 }
 
 // remove rooms in bulk from list 
-const deleteRooms = async (req: Request, res: Response) => {
+export const deleteRooms = async (req: Request, res: Response) => {
     const { id } = req.body
     try {
         const room = await prisma.room.deleteMany({

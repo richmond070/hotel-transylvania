@@ -10,7 +10,8 @@ export const createGuest = async (req: Request, res: Response) => {
                 id: id,
                 firstName: firstName,
                 lastName: lastName,
-                email: email
+                email: email,
+                active: false
             },
         });
         res.status(201).json({
@@ -34,7 +35,8 @@ export const listGuest = async (req: Request, res: Response) => {
             select: {
                 email: true,
                 firstName: true,
-                lastName: true
+                lastName: true,
+
             },
         });
         res.status(200).json({ data: guest })
