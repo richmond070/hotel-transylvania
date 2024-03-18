@@ -20,6 +20,9 @@ model Guest {
   email     String
   active    Boolean
 
+  // Add fullName field
+  fullName String @map("CONCAT(firstName, ' ', lastName)")
+
   reservations Reservation[]
 }
 
